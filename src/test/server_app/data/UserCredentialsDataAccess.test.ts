@@ -6,7 +6,7 @@ const getByMock = jest.fn();
 
 jest.mock("../../../app/server_app/data/DataBase", () => {
   return {
-    Database: jest.fn().mockImplementation(() => {
+    DataBase: jest.fn().mockImplementation(() => {
       return {
         insert: insertMock,
         getBy: getByMock,
