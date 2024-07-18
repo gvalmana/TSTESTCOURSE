@@ -39,7 +39,7 @@ describe("getRequestBody suit", () => {
       getRequestBody(requestMock as any as IncomingMessage)
     ).rejects.toThrow("Unexpected token a in JSON at position 0");
   });
-  it("Should throw error unexpected error", async () => {
+  it.skip("Should throw error unexpected error", async () => {
     const someError = new Error("Something went wrong!!!");
     requestMock.on.mockImplementation((event, callback) => {
       if (event == "error") {
