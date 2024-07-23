@@ -1,19 +1,19 @@
-import { RegisterHandler } from "../../../app/server_app/handlers/RegisterHandler";
-import { IncomingMessage, ServerResponse } from "http";
-import { Authorizer } from "../../../app/server_app/auth/Authorizer";
-import { Account } from "../../../app/server_app/model/AuthModel";
+import { RegisterHandler } from '../../../app/server_app/handlers/RegisterHandler';
+import { IncomingMessage, ServerResponse } from 'http';
+import { Authorizer } from '../../../app/server_app/auth/Authorizer';
+import { Account } from '../../../app/server_app/model/AuthModel';
 import {
   HTTP_CODES,
   HTTP_METHODS,
-} from "../../../app/server_app/model/ServerModel";
+} from '../../../app/server_app/model/ServerModel';
 
 const getRequestBodyMock = jest.fn();
 
-jest.mock("../../../app/server_app/utils/Utils", () => ({
+jest.mock('../../../app/server_app/utils/Utils', () => ({
   getRequestBody: () => getRequestBodyMock(),
 }));
 
-describe("RegisterHandler Test suite", () => {
+describe('RegisterHandler Test suite', () => {
   let sut: RegisterHandler;
 
   const request = {
@@ -31,18 +31,18 @@ describe("RegisterHandler Test suite", () => {
   };
 
   const someAccount: Account = {
-    id: "",
-    userName: "someUser",
-    password: "somePassword",
+    id: '',
+    userName: 'someUser',
+    password: 'somePassword',
   };
 
-  const someId = "1234";
+  const someId = '1234';
 
   beforeEach(() => {
     sut = new RegisterHandler(
       request as IncomingMessage,
       responseMock as any as ServerResponse,
-      authorizerMock as any as Authorizer
+      authorizerMock as any as Authorizer,
     );
   });
 
@@ -50,8 +50,8 @@ describe("RegisterHandler Test suite", () => {
     jest.clearAllMocks();
   });
 
-  it("Should register valid account in request", async () => {
-    request.method = "POST";
+  it('Should register valid account in request', async () => {
+    request.method = 'POST';
     getRequestBodyMock.mockResolvedValueOnce(someAccount);
     authorizerMock.registerUser.mockResolvedValueOnce(someId);
 
@@ -59,15 +59,15 @@ describe("RegisterHandler Test suite", () => {
 
     expect(responseMock.statusCode).toBe(HTTP_CODES.CREATED);
     expect(responseMock.writeHead).toHaveBeenCalledWith(HTTP_CODES.CREATED, {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     });
 
     expect(responseMock.write).toHaveBeenCalledWith(
-      JSON.stringify({ userId: someId })
+      JSON.stringify({ userId: someId }),
     );
   });
 
-  it("Should not register invalid accounts in request", async () => {
+  it('Should not register invalid accounts in request', async () => {
     request.method = HTTP_METHODS.POST;
     getRequestBodyMock.mockResolvedValueOnce({});
     await sut.handleRequest();
@@ -75,15 +75,15 @@ describe("RegisterHandler Test suite", () => {
     expect(responseMock.writeHead).toHaveBeenCalledWith(
       HTTP_CODES.BAD_REQUEST,
       {
-        "Content-Type": "application/json",
-      }
+        'Content-Type': 'application/json',
+      },
     );
     expect(responseMock.write).toHaveBeenCalledWith(
-      JSON.stringify("userName and password required")
+      JSON.stringify('userName and password required'),
     );
   });
 
-  it("Should do nothing for not supported http methods", async () => {
+  it('Should do nothing for not supported http methods', async () => {
     request.method = HTTP_METHODS.GET;
     await sut.handleRequest();
     expect(responseMock.writeHead).not.toHaveBeenCalled();

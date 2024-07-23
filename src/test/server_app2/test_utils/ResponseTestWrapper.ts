@@ -1,4 +1,4 @@
-import { HTTP_CODES } from "../../../app/server_app/model/ServerModel";
+import { HTTP_CODES } from '../../../app/server_app/model/ServerModel';
 
 export class ResponseTestWrapper {
   public statusCode: HTTP_CODES;

@@ -1,8 +1,8 @@
-import { IncomingMessage, ServerResponse } from "http";
-import { Authorizer } from "../auth/Authorizer";
-import { Account } from "../model/AuthModel";
-import { HTTP_CODES, HTTP_METHODS } from "../model/ServerModel";
-import { getRequestBody } from "../utils/Utils";
+import { IncomingMessage, ServerResponse } from 'http';
+import { Authorizer } from '../auth/Authorizer';
+import { Account } from '../model/AuthModel';
+import { HTTP_CODES, HTTP_METHODS } from '../model/ServerModel';
+import { getRequestBody } from '../utils/Utils';
 
 export class RegisterHandler {
   private authorizer: Authorizer;
@@ -12,7 +12,7 @@ export class RegisterHandler {
   public constructor(
     request: IncomingMessage,
     response: ServerResponse,
-    authorizer: Authorizer
+    authorizer: Authorizer,
   ) {
     this.request = request;
     this.response = response;
@@ -34,23 +34,23 @@ export class RegisterHandler {
     if (requestBody.userName && requestBody.password) {
       const userId = await this.authorizer.registerUser(
         requestBody.userName,
-        requestBody.password
+        requestBody.password,
       );
       this.response.statusCode = HTTP_CODES.CREATED;
       this.response.writeHead(HTTP_CODES.CREATED, {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       });
       this.response.write(
         JSON.stringify({
           userId,
-        })
+        }),
       );
       return;
     }
     this.response.statusCode = HTTP_CODES.BAD_REQUEST;
     this.response.writeHead(HTTP_CODES.BAD_REQUEST, {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     });
-    this.response.write(JSON.stringify("userName and password required"));
+    this.response.write(JSON.stringify('userName and password required'));
   }
 }

@@ -1,19 +1,19 @@
-import { IncomingMessage, ServerResponse } from "http";
-import { Authorizer } from "../../../app/server_app/auth/Authorizer";
-import { ReservationsDataAccess } from "../../../app/server_app/data/ReservationsDataAccess";
-import { ReservationsHandler } from "../../../app/server_app/handlers/ReservationsHandler";
-import { Reservation } from "../../../app/server_app/model/ReservationModel";
+import { IncomingMessage, ServerResponse } from 'http';
+import { Authorizer } from '../../../app/server_app/auth/Authorizer';
+import { ReservationsDataAccess } from '../../../app/server_app/data/ReservationsDataAccess';
+import { ReservationsHandler } from '../../../app/server_app/handlers/ReservationsHandler';
+import { Reservation } from '../../../app/server_app/model/ReservationModel';
 import {
   HTTP_CODES,
   HTTP_METHODS,
-} from "../../../app/server_app/model/ServerModel";
+} from '../../../app/server_app/model/ServerModel';
 
 const getRequestBodyMock = jest.fn();
-jest.mock("../../../app/server_app/utils/Utils", () => ({
+jest.mock('../../../app/server_app/utils/Utils', () => ({
   getRequestBody: () => getRequestBodyMock(),
 }));
 
-describe("ReservationsHandler test suite", () => {
+describe('ReservationsHandler test suite', () => {
   let sut: ReservationsHandler;
 
   const request = {
@@ -45,19 +45,19 @@ describe("ReservationsHandler test suite", () => {
     id: undefined,
     endDate: new Date().toDateString(),
     startDate: new Date().toDateString(),
-    room: "someRoom",
-    user: "someUser",
+    room: 'someRoom',
+    user: 'someUser',
   };
-  const someReservationId = "1234";
+  const someReservationId = '1234';
 
   beforeEach(() => {
     sut = new ReservationsHandler(
       request as IncomingMessage,
       responseMock as any as ServerResponse,
       authorizerMock as any as Authorizer,
-      reservationsDataAccessMock as any as ReservationsDataAccess
+      reservationsDataAccessMock as any as ReservationsDataAccess,
     );
-    request.headers.authorization = "abcd";
+    request.headers.authorization = 'abcd';
     authorizerMock.validateToken.mockResolvedValueOnce(true);
   });
 
@@ -67,59 +67,59 @@ describe("ReservationsHandler test suite", () => {
     responseMock.statusCode = 0;
   });
 
-  describe("POST requests", () => {
+  describe('POST requests', () => {
     beforeEach(() => {
       request.method = HTTP_METHODS.POST;
     });
 
-    it("should create reservation from valid request", async () => {
+    it('should create reservation from valid request', async () => {
       getRequestBodyMock.mockResolvedValueOnce(someReservation);
       reservationsDataAccessMock.createReservation.mockResolvedValueOnce(
-        someReservationId
+        someReservationId,
       );
 
       await sut.handleRequest();
 
       expect(responseMock.statusCode).toBe(HTTP_CODES.CREATED);
       expect(responseMock.writeHead).toHaveBeenCalledWith(HTTP_CODES.CREATED, {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       });
       expect(responseMock.write).toHaveBeenCalledWith(
-        JSON.stringify({ reservationId: someReservationId })
+        JSON.stringify({ reservationId: someReservationId }),
       );
     });
 
-    it("should not create reservation from invalid request", async () => {
+    it('should not create reservation from invalid request', async () => {
       getRequestBodyMock.mockResolvedValueOnce({});
 
       await sut.handleRequest();
 
       expect(responseMock.statusCode).toBe(HTTP_CODES.BAD_REQUEST);
       expect(responseMock.write).toHaveBeenCalledWith(
-        JSON.stringify("Incomplete reservation!")
+        JSON.stringify('Incomplete reservation!'),
       );
     });
 
-    it("should not create reservation from invalid fields in request", async () => {
-      const moreThanAReservation = { ...someReservation, someField: "123" };
+    it('should not create reservation from invalid fields in request', async () => {
+      const moreThanAReservation = { ...someReservation, someField: '123' };
       getRequestBodyMock.mockResolvedValueOnce(moreThanAReservation);
 
       await sut.handleRequest();
 
       expect(responseMock.statusCode).toBe(HTTP_CODES.BAD_REQUEST);
       expect(responseMock.write).toHaveBeenCalledWith(
-        JSON.stringify("Incomplete reservation!")
+        JSON.stringify('Incomplete reservation!'),
       );
     });
   });
 
-  describe("GET requests", () => {
+  describe('GET requests', () => {
     beforeEach(() => {
       request.method = HTTP_METHODS.GET;
     });
 
-    it("should return all reservations for /all request", async () => {
-      request.url = "/reservations/all";
+    it('should return all reservations for /all request', async () => {
+      request.url = '/reservations/all';
       reservationsDataAccessMock.getAllReservations.mockResolvedValueOnce([
         someReservation,
       ]);
@@ -127,106 +127,106 @@ describe("ReservationsHandler test suite", () => {
       await sut.handleRequest();
 
       expect(responseMock.writeHead).toHaveBeenCalledWith(HTTP_CODES.OK, {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       });
       expect(responseMock.write).toHaveBeenCalledWith(
-        JSON.stringify([someReservation])
+        JSON.stringify([someReservation]),
       );
     });
 
-    it("should return reservation for existing id", async () => {
+    it('should return reservation for existing id', async () => {
       request.url = `/reservations/${someReservationId}`;
       reservationsDataAccessMock.getReservation.mockResolvedValueOnce(
-        someReservation
+        someReservation,
       );
 
       await sut.handleRequest();
 
       expect(responseMock.writeHead).toHaveBeenCalledWith(HTTP_CODES.OK, {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       });
       expect(responseMock.write).toHaveBeenCalledWith(
-        JSON.stringify(someReservation)
+        JSON.stringify(someReservation),
       );
     });
 
-    it("should return not found for non existing id", async () => {
+    it('should return not found for non existing id', async () => {
       request.url = `/reservations/${someReservationId}`;
       reservationsDataAccessMock.getReservation.mockResolvedValueOnce(
-        undefined
+        undefined,
       );
 
       await sut.handleRequest();
 
       expect(responseMock.statusCode).toBe(HTTP_CODES.NOT_fOUND);
       expect(responseMock.write).toHaveBeenCalledWith(
-        JSON.stringify(`Reservation with id ${someReservationId} not found`)
+        JSON.stringify(`Reservation with id ${someReservationId} not found`),
       );
     });
 
-    it("should return bad request if no id provided", async () => {
+    it('should return bad request if no id provided', async () => {
       request.url = `/reservations`;
 
       await sut.handleRequest();
 
       expect(responseMock.statusCode).toBe(HTTP_CODES.BAD_REQUEST);
       expect(responseMock.write).toHaveBeenCalledWith(
-        JSON.stringify("Please provide an ID!")
+        JSON.stringify('Please provide an ID!'),
       );
     });
   });
 
-  describe("PUT requests", () => {
+  describe('PUT requests', () => {
     beforeEach(() => {
       request.method = HTTP_METHODS.PUT;
     });
 
-    it("should return not found for non existing id", async () => {
+    it('should return not found for non existing id', async () => {
       request.url = `/reservations/${someReservationId}`;
       reservationsDataAccessMock.getReservation.mockResolvedValueOnce(
-        undefined
+        undefined,
       );
 
       await sut.handleRequest();
 
       expect(responseMock.statusCode).toBe(HTTP_CODES.NOT_fOUND);
       expect(responseMock.write).toHaveBeenCalledWith(
-        JSON.stringify(`Reservation with id ${someReservationId} not found`)
+        JSON.stringify(`Reservation with id ${someReservationId} not found`),
       );
     });
 
-    it("should return bad request if no id provided", async () => {
+    it('should return bad request if no id provided', async () => {
       request.url = `/reservations`;
 
       await sut.handleRequest();
 
       expect(responseMock.statusCode).toBe(HTTP_CODES.BAD_REQUEST);
       expect(responseMock.write).toHaveBeenCalledWith(
-        JSON.stringify("Please provide an ID!")
+        JSON.stringify('Please provide an ID!'),
       );
     });
 
-    it("should return bad request if invalid fields are provided", async () => {
+    it('should return bad request if invalid fields are provided', async () => {
       request.url = `/reservations/${someReservationId}`;
       reservationsDataAccessMock.getReservation.mockResolvedValueOnce(
-        someReservation
+        someReservation,
       );
       getRequestBodyMock.mockResolvedValueOnce({
-        startDate1: "someDate",
+        startDate1: 'someDate',
       });
 
       await sut.handleRequest();
 
       expect(responseMock.statusCode).toBe(HTTP_CODES.BAD_REQUEST);
       expect(responseMock.write).toHaveBeenCalledWith(
-        JSON.stringify("Please provide valid fields to update!")
+        JSON.stringify('Please provide valid fields to update!'),
       );
     });
 
-    it("should return bad request if no fields are provided", async () => {
+    it('should return bad request if no fields are provided', async () => {
       request.url = `/reservations/${someReservationId}`;
       reservationsDataAccessMock.getReservation.mockResolvedValueOnce(
-        someReservation
+        someReservation,
       );
       getRequestBodyMock.mockResolvedValueOnce({});
 
@@ -234,82 +234,82 @@ describe("ReservationsHandler test suite", () => {
 
       expect(responseMock.statusCode).toBe(HTTP_CODES.BAD_REQUEST);
       expect(responseMock.write).toHaveBeenCalledWith(
-        JSON.stringify("Please provide valid fields to update!")
+        JSON.stringify('Please provide valid fields to update!'),
       );
     });
 
-    it("should update reservation with all valid fields provided", async () => {
+    it('should update reservation with all valid fields provided', async () => {
       request.url = `/reservations/${someReservationId}`;
       reservationsDataAccessMock.getReservation.mockResolvedValueOnce(
-        someReservation
+        someReservation,
       );
       const updateObject = {
-        startDate: "someDate1",
-        endDate: "someDate2",
+        startDate: 'someDate1',
+        endDate: 'someDate2',
       };
       getRequestBodyMock.mockResolvedValueOnce(updateObject);
 
       await sut.handleRequest();
 
       expect(
-        reservationsDataAccessMock.updateReservation
+        reservationsDataAccessMock.updateReservation,
       ).toHaveBeenCalledTimes(2);
       expect(reservationsDataAccessMock.updateReservation).toHaveBeenCalledWith(
         someReservationId,
-        "startDate",
-        updateObject.startDate
+        'startDate',
+        updateObject.startDate,
       );
       expect(reservationsDataAccessMock.updateReservation).toHaveBeenCalledWith(
         someReservationId,
-        "endDate",
-        updateObject.endDate
+        'endDate',
+        updateObject.endDate,
       );
       expect(responseMock.writeHead).toHaveBeenCalledWith(HTTP_CODES.OK, {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       });
       expect(responseMock.write).toHaveBeenCalledWith(
         JSON.stringify(
           `Updated ${Object.keys(
-            updateObject
-          )} of reservation ${someReservationId}`
-        )
+            updateObject,
+          )} of reservation ${someReservationId}`,
+        ),
       );
     });
   });
 
-  describe("DELETE requests", () => {
+  describe('DELETE requests', () => {
     beforeEach(() => {
       request.method = HTTP_METHODS.DELETE;
     });
 
-    it("should delete reservation with provided id", async () => {
+    it('should delete reservation with provided id', async () => {
       request.url = `/reservations/${someReservationId}`;
 
       await sut.handleRequest();
 
       expect(reservationsDataAccessMock.deleteReservation).toHaveBeenCalledWith(
-        someReservationId
+        someReservationId,
       );
       expect(responseMock.statusCode).toBe(HTTP_CODES.OK);
       expect(responseMock.write).toHaveBeenCalledWith(
-        JSON.stringify(`Deleted reservation with id ${someReservationId}`)
+        JSON.stringify(`Deleted reservation with id ${someReservationId}`),
       );
     });
 
-    it("should return bad request if no id provided", async () => {
+    it('should return bad request if no id provided', async () => {
       request.url = `/reservations`;
 
       await sut.handleRequest();
 
       expect(responseMock.statusCode).toBe(HTTP_CODES.BAD_REQUEST);
       expect(responseMock.write).toHaveBeenCalledWith(
-        JSON.stringify("Please provide an ID!")
+        JSON.stringify('Please provide an ID!'),
       );
     });
   });
 
-  it("should return nothing for not authorized requests", async () => {
-    request.headers.authorization = "1234";
+  it('should return nothing for not authorized requests', async () => {
+    request.headers.authorization = '1234';
     authorizerMock.validateToken.mockReset();
     authorizerMock.validateToken.mockResolvedValueOnce(false);
 
@@ -317,23 +317,23 @@ describe("ReservationsHandler test suite", () => {
 
     expect(responseMock.statusCode).toBe(HTTP_CODES.UNAUTHORIZED);
     expect(responseMock.write).toHaveBeenCalledWith(
-      JSON.stringify("Unauthorized operation!")
+      JSON.stringify('Unauthorized operation!'),
     );
   });
 
-  it("should return nothing if no authorization header is present", async () => {
+  it('should return nothing if no authorization header is present', async () => {
     request.headers.authorization = undefined;
 
     await sut.handleRequest();
 
     expect(responseMock.statusCode).toBe(HTTP_CODES.UNAUTHORIZED);
     expect(responseMock.write).toHaveBeenCalledWith(
-      JSON.stringify("Unauthorized operation!")
+      JSON.stringify('Unauthorized operation!'),
     );
   });
 
-  it("should do nothing for not supported http methods", async () => {
-    request.method = "SOME-METHOD";
+  it('should do nothing for not supported http methods', async () => {
+    request.method = 'SOME-METHOD';
 
     await sut.handleRequest();
 

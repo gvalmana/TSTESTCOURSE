@@ -1,22 +1,22 @@
-import { getRequestBody } from "../../../app/server_app/utils/Utils";
-import { IncomingMessage } from "http";
+import { getRequestBody } from '../../../app/server_app/utils/Utils';
+import { IncomingMessage } from 'http';
 
 const requestMock = {
   on: jest.fn(),
 };
 
 const someObjetc = {
-  name: "Gustavo",
+  name: 'Gustavo',
   age: 36,
-  city: "Habana",
+  city: 'Habana',
 };
 
 const someObjectAsString = JSON.stringify(someObjetc);
 
-describe("getRequestBody suit", () => {
-  it("Should return objetct for valid JSON", async () => {
+describe('getRequestBody suit', () => {
+  it('Should return objetct for valid JSON', async () => {
     requestMock.on.mockImplementation((event, callback) => {
-      if (event == "data") {
+      if (event == 'data') {
         callback(someObjectAsString);
       } else {
         callback();
@@ -26,23 +26,23 @@ describe("getRequestBody suit", () => {
 
     expect(actual).toEqual(someObjetc);
   });
-  it("Should throw error for invalid JSON", async () => {
+  it('Should throw error for invalid JSON', async () => {
     requestMock.on.mockImplementation((event, callback) => {
-      if (event == "data") {
-        callback("a" + someObjectAsString);
+      if (event == 'data') {
+        callback('a' + someObjectAsString);
       } else {
         callback();
       }
     });
 
     await expect(
-      getRequestBody(requestMock as any as IncomingMessage)
-    ).rejects.toThrow("Unexpected token a in JSON at position 0");
+      getRequestBody(requestMock as any as IncomingMessage),
+    ).rejects.toThrow('Unexpected token a in JSON at position 0');
   });
-  it.skip("Should throw error unexpected error", async () => {
-    const someError = new Error("Something went wrong!!!");
+  it.skip('Should throw error unexpected error', async () => {
+    const someError = new Error('Something went wrong!!!');
     requestMock.on.mockImplementation((event, callback) => {
-      if (event == "error") {
+      if (event == 'error') {
         callback(someError);
       } else {
         callback();
@@ -50,7 +50,7 @@ describe("getRequestBody suit", () => {
     });
 
     await expect(
-      getRequestBody(requestMock as any as IncomingMessage)
+      getRequestBody(requestMock as any as IncomingMessage),
     ).rejects.toThrow(someError.message);
   });
 });

@@ -1,4 +1,4 @@
-import { HTTP_METHODS } from "../../../app/server_app/model/ServerModel";
+import { HTTP_METHODS } from '../../../app/server_app/model/ServerModel';
 
 export class RequestTestWrapper {
   public body: object;
@@ -7,7 +7,7 @@ export class RequestTestWrapper {
   public headers = {};
 
   public on(event, cb) {
-    if (event == "data") {
+    if (event == 'data') {
       cb(JSON.stringify(this.body));
     } else {
       cb();

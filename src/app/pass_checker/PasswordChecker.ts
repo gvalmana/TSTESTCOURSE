@@ -1,8 +1,8 @@
 export enum PasswordErrors {
-  SHORT = "Password is to short!",
-  NO_UPPERCASE = "Upper case letter required!",
-  NO_LOWERCASE = "Lower case letter required!",
-  NO_NUMBERS = "At least one number required!",
+  SHORT = 'Password is to short!',
+  NO_UPPERCASE = 'Upper case letter required!',
+  NO_LOWERCASE = 'Lower case letter required!',
+  NO_NUMBERS = 'At least one number required!',
 }
 
 export interface CheckResult {

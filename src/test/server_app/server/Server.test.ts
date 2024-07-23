@@ -1,21 +1,21 @@
-import { Server } from "../../../app/server_app/server/Server";
-import { RegisterHandler } from "../../../app/server_app/handlers/RegisterHandler";
-import { Authorizer } from "../../../app/server_app/auth/Authorizer";
-import { LoginHandler } from "../../../app/server_app/handlers/LoginHandler";
-import { ReservationsHandler } from "../../../app/server_app/handlers/ReservationsHandler";
-import { ReservationsDataAccess } from "../../../app/server_app/data/ReservationsDataAccess";
-import { HTTP_CODES } from "../../../app/server_app/model/ServerModel";
+import { Server } from '../../../app/server_app/server/Server';
+import { RegisterHandler } from '../../../app/server_app/handlers/RegisterHandler';
+import { Authorizer } from '../../../app/server_app/auth/Authorizer';
+import { LoginHandler } from '../../../app/server_app/handlers/LoginHandler';
+import { ReservationsHandler } from '../../../app/server_app/handlers/ReservationsHandler';
+import { ReservationsDataAccess } from '../../../app/server_app/data/ReservationsDataAccess';
+import { HTTP_CODES } from '../../../app/server_app/model/ServerModel';
 
-jest.mock("../../../app/server_app/auth/Authorizer");
-jest.mock("../../../app/server_app/data/ReservationsDataAccess");
-jest.mock("../../../app/server_app/handlers/LoginHandler");
-jest.mock("../../../app/server_app/handlers/RegisterHandler");
-jest.mock("../../../app/server_app/handlers/ReservationsHandler");
+jest.mock('../../../app/server_app/auth/Authorizer');
+jest.mock('../../../app/server_app/data/ReservationsDataAccess');
+jest.mock('../../../app/server_app/handlers/LoginHandler');
+jest.mock('../../../app/server_app/handlers/RegisterHandler');
+jest.mock('../../../app/server_app/handlers/ReservationsHandler');
 
 const resquestMock = {
-  url: "",
+  url: '',
   headers: {
-    "user-agent": "jest-test",
+    'user-agent': 'jest-test',
   },
 };
 
@@ -29,14 +29,14 @@ const serverMock = {
   close: jest.fn(),
 };
 
-jest.mock("http", () => ({
+jest.mock('http', () => ({
   createServer: (cb: Function) => {
     cb(resquestMock, responseMock);
     return serverMock;
   },
 }));
 
-describe.only("Server Test suite", () => {
+describe.only('Server Test suite', () => {
   let sut: Server;
 
   beforeEach(() => {
@@ -47,17 +47,17 @@ describe.only("Server Test suite", () => {
     jest.clearAllMocks();
   });
 
-  it("Should start server on port 8080 and end the request", async () => {
+  it('Should start server on port 8080 and end the request', async () => {
     await sut.startServer();
     expect(serverMock.listen).toHaveBeenCalledWith(8080);
     expect(responseMock.end).toHaveBeenCalled();
   });
 
-  it("Should handle register request", async () => {
-    resquestMock.url = "localhost:8080/register";
+  it('Should handle register request', async () => {
+    resquestMock.url = 'localhost:8080/register';
     const handleRequestSpy = jest.spyOn(
       RegisterHandler.prototype,
-      "handleRequest"
+      'handleRequest',
     );
     await sut.startServer();
 
@@ -65,15 +65,15 @@ describe.only("Server Test suite", () => {
     expect(RegisterHandler).toHaveBeenCalledWith(
       resquestMock,
       responseMock,
-      expect.any(Authorizer) //Call with the right type of argument
+      expect.any(Authorizer), //Call with the right type of argument
     );
   });
 
-  it("Should handle login request", async () => {
-    resquestMock.url = "localhost:8080/login";
+  it('Should handle login request', async () => {
+    resquestMock.url = 'localhost:8080/login';
     const handleRequestSpy = jest.spyOn(
       LoginHandler.prototype,
-      "handleRequest"
+      'handleRequest',
     );
     await sut.startServer();
 
@@ -81,15 +81,15 @@ describe.only("Server Test suite", () => {
     expect(LoginHandler).toHaveBeenCalledWith(
       resquestMock,
       responseMock,
-      expect.any(Authorizer) //Call with the right type of argument
+      expect.any(Authorizer), //Call with the right type of argument
     );
   });
 
-  it("Should handle reservation request", async () => {
-    resquestMock.url = "localhost:8080/reservation";
+  it('Should handle reservation request', async () => {
+    resquestMock.url = 'localhost:8080/reservation';
     const handleRequestSpy = jest.spyOn(
       ReservationsHandler.prototype,
-      "handleRequest"
+      'handleRequest',
     );
     await sut.startServer();
 
@@ -98,33 +98,33 @@ describe.only("Server Test suite", () => {
       resquestMock,
       responseMock,
       expect.any(Authorizer), //Call with the right type of argument
-      expect.any(ReservationsDataAccess)
+      expect.any(ReservationsDataAccess),
     );
   });
 
-  it("Should do nothing for not supported routes", async () => {
-    resquestMock.url = "localhost:8080/someRandomRoute";
-    const validateTokenSpy = jest.spyOn(Authorizer.prototype, "validateToken");
+  it('Should do nothing for not supported routes', async () => {
+    resquestMock.url = 'localhost:8080/someRandomRoute';
+    const validateTokenSpy = jest.spyOn(Authorizer.prototype, 'validateToken');
     await sut.startServer();
 
     expect(validateTokenSpy).not.toHaveBeenCalledTimes(1);
   });
 
-  it("Should handle errors in serving request", async () => {
-    resquestMock.url = "localhost:8080/reservation";
+  it('Should handle errors in serving request', async () => {
+    resquestMock.url = 'localhost:8080/reservation';
     const handleRequestSpy = jest.spyOn(
       ReservationsHandler.prototype,
-      "handleRequest"
+      'handleRequest',
     );
-    handleRequestSpy.mockRejectedValueOnce(new Error("some error"));
+    handleRequestSpy.mockRejectedValueOnce(new Error('some error'));
     await sut.startServer();
     expect(responseMock.writeHead).toHaveBeenCalledWith(
       HTTP_CODES.INTERNAL_SERVER_ERROR,
-      JSON.stringify("Internal server error: some error")
+      JSON.stringify('Internal server error: some error'),
     );
   });
 
-  it("Should stop the server if started", async () => {
+  it('Should stop the server if started', async () => {
     serverMock.close.mockImplementation((callback: Function) => {
       callback();
     });

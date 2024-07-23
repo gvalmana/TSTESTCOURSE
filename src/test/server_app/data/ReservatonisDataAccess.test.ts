@@ -1,7 +1,7 @@
-import { ReservationsDataAccess } from "../../../app/server_app/data/ReservationsDataAccess";
-import { DataBase } from "../../../app/server_app/data/DataBase";
-import * as IdGenerator from "../../../app/server_app/data/IdGenerator";
-import { Reservation } from "../../../app/server_app/model/ReservationModel";
+import { ReservationsDataAccess } from '../../../app/server_app/data/ReservationsDataAccess';
+import { DataBase } from '../../../app/server_app/data/DataBase';
+import * as IdGenerator from '../../../app/server_app/data/IdGenerator';
+import { Reservation } from '../../../app/server_app/model/ReservationModel';
 
 const mockInsert = jest.fn();
 const mockGetBy = jest.fn();
@@ -9,7 +9,7 @@ const mockUpdate = jest.fn();
 const mockDelete = jest.fn();
 const mockGetAllElements = jest.fn();
 
-jest.mock("../../../app/server_app/data/DataBase", () => {
+jest.mock('../../../app/server_app/data/DataBase', () => {
   return {
     DataBase: jest.fn().mockImplementation(() => {
       return {
@@ -23,31 +23,31 @@ jest.mock("../../../app/server_app/data/DataBase", () => {
   };
 });
 
-describe("ReservationsDataAccess test suite", () => {
+describe('ReservationsDataAccess test suite', () => {
   let sut: ReservationsDataAccess;
 
-  const someId = "1234";
+  const someId = '1234';
 
   const someReservation: Reservation = {
-    endDate: "someEndDate",
-    startDate: "someStartDate",
-    id: "",
-    room: "someRoom",
-    user: "someUser",
+    endDate: 'someEndDate',
+    startDate: 'someStartDate',
+    id: '',
+    room: 'someRoom',
+    user: 'someUser',
   };
 
   beforeEach(() => {
     sut = new ReservationsDataAccess();
     expect(DataBase).toHaveBeenCalledTimes(1);
-    jest.spyOn(IdGenerator, "generateRandomId").mockReturnValueOnce(someId);
+    jest.spyOn(IdGenerator, 'generateRandomId').mockReturnValueOnce(someId);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
-    someReservation.id = "";
+    someReservation.id = '';
   });
 
-  it("should return the id of newly created reservation", async () => {
+  it('should return the id of newly created reservation', async () => {
     mockInsert.mockResolvedValueOnce(someId);
 
     const actual = await sut.createReservation(someReservation);
@@ -56,32 +56,32 @@ describe("ReservationsDataAccess test suite", () => {
     expect(mockInsert).toHaveBeenCalledWith(someReservation);
   });
 
-  it("should make the update reservation call", async () => {
-    await sut.updateReservation(someId, "endDate", "someOtherEndDate");
+  it('should make the update reservation call', async () => {
+    await sut.updateReservation(someId, 'endDate', 'someOtherEndDate');
 
     expect(mockUpdate).toHaveBeenCalledWith(
       someId,
-      "endDate",
-      "someOtherEndDate"
+      'endDate',
+      'someOtherEndDate',
     );
   });
 
-  it("should make the delete reservation call", async () => {
+  it('should make the delete reservation call', async () => {
     await sut.deleteReservation(someId);
 
     expect(mockDelete).toHaveBeenCalledWith(someId);
   });
 
-  it("should return reservation by id", async () => {
+  it('should return reservation by id', async () => {
     mockGetBy.mockResolvedValueOnce(someReservation);
 
     const actual = await sut.getReservation(someId);
 
     expect(actual).toEqual(someReservation);
-    expect(mockGetBy).toHaveBeenCalledWith("id", someId);
+    expect(mockGetBy).toHaveBeenCalledWith('id', someId);
   });
 
-  it("should return all reservations", async () => {
+  it('should return all reservations', async () => {
     mockGetAllElements.mockResolvedValueOnce([
       someReservation,
       someReservation,

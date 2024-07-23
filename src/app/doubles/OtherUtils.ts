@@ -1,4 +1,4 @@
-import { v4 } from "uuid";
+import { v4 } from 'uuid';
 
 export type stringInfo = {
   lowerCase: string;
@@ -24,10 +24,10 @@ export function calculateComplexity(stringInfo: stringInfo): number {
 
 export function toUpperCaseWithCB(
   str: string,
-  callback: LoggerServiceCallBack
+  callback: LoggerServiceCallBack,
 ): void | string {
   if (!str) {
-    callback("Invalid argument");
+    callback('Invalid argument');
     return;
   }
   callback(`Called fuction with ${str}`);
@@ -36,7 +36,7 @@ export function toUpperCaseWithCB(
 
 export class OtherStringUtils {
   private callExternalService(): void {
-    console.log("Calling external service!!!");
+    console.log('Calling external service!!!');
   }
 
   public toUpperCase(str: string): string {
