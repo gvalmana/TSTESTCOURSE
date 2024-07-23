@@ -12,6 +12,7 @@ jest.mock('../../app/server_app/data/DataBase');
 const requestWrapper = new RequestTestWrapper();
 const responseWrapper = new ResponseTestWrapper();
 
+//Comentario de pruebas
 const fakeServer = {
   listen: () => {},
   close: () => {},
