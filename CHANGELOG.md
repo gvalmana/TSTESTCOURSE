@@ -1,6 +1,9 @@
 ## 1.0.0 (2024-07-23)
 
+* chore(docs): :memo: Added comments ([b20db75](https://github.com/gvalmana/TSTESTCOURSE/commit/b20db75))
 * ci(ci): :green_heart: Agregado Conventionals Commits ([b8e7f72](https://github.com/gvalmana/TSTESTCOURSE/commit/b8e7f72))
+* ci(ci): :green_heart: Agregado el cambio a la rama main ([057c4cc](https://github.com/gvalmana/TSTESTCOURSE/commit/057c4cc))
+* docs(docs): :memo: Se agrega un changelog.md ([ea2394b](https://github.com/gvalmana/TSTESTCOURSE/commit/ea2394b))
 * capitulo 43 ([0d1b53b](https://github.com/gvalmana/TSTESTCOURSE/commit/0d1b53b))
 * corregido capitulo low mocks testing ([16dd4f3](https://github.com/gvalmana/TSTESTCOURSE/commit/16dd4f3))
 * double checker ([e527a7c](https://github.com/gvalmana/TSTESTCOURSE/commit/e527a7c))
