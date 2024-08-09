@@ -10,7 +10,7 @@ export class StringUtils {
 export function toUpperCase(str: string): string {
   return str.toUpperCase();
 }
-
+//Comentario
 export type stringInfo = {
   lowerCase: string;
   upperCase: string;
