@@ -11,6 +11,7 @@ export function toUpperCase(str: string): string {
   return str.toUpperCase();
 }
 //Comentario
+//Comentario agregado
 export type stringInfo = {
   lowerCase: string;
   upperCase: string;
