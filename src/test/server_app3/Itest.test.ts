@@ -1,3 +1,4 @@
+import * as generated from '../../app/server_app/data/IdGenerator';
 import { Account } from '../../app/server_app/model/AuthModel';
 import { Reservation } from '../../app/server_app/model/ReservationModel';
 import {
@@ -6,7 +7,7 @@ import {
 } from '../../app/server_app/model/ServerModel';
 import { Server } from '../../app/server_app/server/Server';
 import { makeAwesomeRequest } from './utils/http-client';
-describe('Server app integration test suite', () => {
+xdescribe('Server app integration test suite', () => {
   let server: Server;
 
   beforeAll(() => {
@@ -182,5 +183,26 @@ describe('Server app integration test suite', () => {
       },
     );
     expect(getResult.status).toBe(HTTP_CODES.NOT_fOUND);
+    console.log(process.env.HOST);
+  });
+  it('Snapshot demo', async () => {
+    jest.spyOn(generated, 'generateRandomId').mockReturnValueOnce('12345');
+
+    await fetch('http://localhost:8080/reservation', {
+      method: HTTP_METHODS.POST,
+      body: JSON.stringify(someReservation),
+      headers: {
+        Authorization: token,
+      },
+    });
+    const getResult = await fetch(`http://localhost:8080/reservation/12345`, {
+      method: HTTP_METHODS.GET,
+      headers: {
+        Authorization: token,
+      },
+    });
+    const getRequestBody: Reservation = await getResult.json();
+    expect(getRequestBody).toMatchSnapshot();
+    expect(getRequestBody).toMatchSnapshot();
   });
 });

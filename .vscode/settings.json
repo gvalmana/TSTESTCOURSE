@@ -1,3 +1,3 @@
 {
-  "conventionalCommits.scopes": ["tdd", "ci", "docs"]
+  "conventionalCommits.scopes": ["tdd", "ci", "docs", "test"]
 }
